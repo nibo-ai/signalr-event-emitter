@@ -1,0 +1,80 @@
+import { HubConnectionBuilder, HubConnection, HttpTransportType } from "@aspnet/signalr";
+import { EventType, AbstractEventEmitter, Listener } from "./abstract-event-emitter";
+
+export interface SignalrCoreEventEmitterSettings {
+	url: string;
+	userProfile: {upn: string, tid: string};
+	logLevel: number;
+	allowedEventNames: EventType[];
+	maxReconnectionRetries: number;
+	reconnectionInterval: number;
+}
+
+export class SignalrCoreEventEmitter extends AbstractEventEmitter {
+
+	private connection: HubConnection;
+
+	constructor(public readonly settings: SignalrCoreEventEmitterSettings) {
+		super(settings.allowedEventNames);
+		this.settings = Object.assign({}, {
+			maxReconnectionRetries: 3,
+			reconnectionRetryTimeout: 300000
+		}, this.settings);
+		this.init();
+	}
+
+	private init(): void {
+		if (this.connection) {
+			return;
+		}
+		let url = this.settings.url;
+		if (this.settings.userProfile) {
+				url += "&upn=" + this.settings.userProfile.upn
+						+ "&tid=" + this.settings.userProfile.tid;
+		}
+		url += "&_=" + Date.now();
+		this.connection = new HubConnectionBuilder().withUrl(this.settings.url, HttpTransportType.WebSockets)
+				.configureLogging(this.settings.logLevel).build();
+		this.connection.start();
+		this.connection.onclose(() => { delete this.connection; });
+	}
+
+	private connectionRetries: 1;
+	private reconnectionInterval: NodeJS.Timer;
+
+	private retry() {
+		if (this.settings.maxReconnectionRetries <= 0) {
+			return;
+		}
+		this.reconnectionInterval = setInterval(() => {
+			if (this.connectionRetries >= this.settings.maxReconnectionRetries) {
+				return;
+			}
+			delete this.connection;
+			this.connectionRetries++;
+			this.init();
+			if (this.connection) {
+				clearInterval(this.reconnectionInterval);
+			}
+		}, this.settings.reconnectionInterval);
+	}
+
+	close(): void {
+		if (this.connection) {
+			this.connection.stop();
+			delete this.connection;
+		}
+	}
+
+	on(event: EventType, listener: Listener): this {
+		event = event.toString();
+		this.connection.on(event, listener);
+		return this;
+	}
+
+	off(event: EventType, listener?: Listener): this {
+		event = event.toString();
+		this.connection.off(event, listener);
+		return this;
+	}
+}
