@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import { matchWildcard } from "./wildcard";
 
 export type EventType = string | symbol;
 export type Listener = (...args: any[]) => void;
@@ -11,11 +12,16 @@ export abstract class AbstractEventEmitter implements EventEmitter {
 	constructor(private allowedEventNames: EventType[] = [AbstractEventEmitter.ANY_EVENT]) {
 	}
 
+	private matchEvents(event1: EventType, event2: EventType): boolean {
+		return event1 === AbstractEventEmitter.ANY_EVENT || event2 === AbstractEventEmitter.ANY_EVENT || event1 === event2
+				|| matchWildcard(event1.toString(), event2.toString());
+	}
+
 	private isEventAllowed(event: EventType): boolean {
 		if (!event) {
 			return false;
 		}
-		return this.allowedEventNames.indexOf(event) >= 0 || this.allowedEventNames.indexOf(AbstractEventEmitter.ANY_EVENT) >= 0;
+		return this.allowedEventNames.findIndex(ev => this.matchEvents(ev, event)) >= 0;
 	}
 
 	private checkIfEventIsAllowed(event: EventType): boolean {
@@ -61,8 +67,18 @@ export abstract class AbstractEventEmitter implements EventEmitter {
 		return l;
 	}
 
+	private getMatchingListeners(event: EventType): Listener[] {
+		let ll: Listener[] = [];
+		for (const ev in this.allListeners) {
+			if (this.allListeners.hasOwnProperty(ev) && this.matchEvents(ev, event)) {
+				ll = ll.concat(this.allListeners[ev]);
+			}
+		}
+		return ll;
+	}
+
 	prependListener(event: EventType, listener: Listener): this {
-		this.getListeners(event).splice(0, 0, listener);
+		this.listeners(event).splice(0, 0, listener);
 		return this;
 	}
 
@@ -83,12 +99,12 @@ export abstract class AbstractEventEmitter implements EventEmitter {
 		}
 	}
 
-	listeners(event: EventType): Function[] {
+	listeners(event: EventType): Listener[] {
 		return this.getListeners(event, true);
 	}
 
 	emit(event: EventType, ...args: any[]): boolean {
-		const listenersForEvent = this.getListeners(event, true);
+		const listenersForEvent = this.getMatchingListeners(event);
 		if (!listenersForEvent || !listenersForEvent.length) {
 			return false;
 		}
@@ -118,12 +134,12 @@ export abstract class AbstractEventEmitter implements EventEmitter {
 	on(event: EventType, listener: Listener): this {
 		this.checkIfEventIsAllowed(event);
 		this.checkListenerCountIncrease();
-		this.getListeners(event).push(listener);
+		this.listeners(event).push(listener);
 		return this;
 	}
 
 	off(event: EventType, listener?: Listener): this {
-		const listenersForEvent = this.getListeners(event, true);
+		const listenersForEvent = this.listeners(event);
 		if (!listenersForEvent || !listenersForEvent.length) {
 			return this;
 		}

@@ -17,7 +17,9 @@
 		"prebuild-lib": "npm run lint-ts",
 		"build-lib": "tsc",
 		"build": "npm run build-lib",
-		"prepublish": "npm run test && npm run build"
+		"prepublish": "npm run test && npm run build",
+		"pretest": "npm run build",
+		"test": "karma start src/karma.conf.js"
 	},
 	"keywords": [
 		"signalr",
@@ -35,22 +37,23 @@
 		"@aspnet/signalr": "latest"
 	},
 	"devDependencies": {
-		"jquery": "latest",
-		"signalr": "latest",
 		"@aspnet/signalr": "latest",
-		"@types/signalr": "latest",
-		"@types/jquery": "latest",
 		"@types/jasmine": "^2.8.8",
 		"@types/jasminewd2": "~2.0.3",
+		"@types/jquery": "latest",
 		"@types/node": "^8.9.4",
+		"@types/signalr": "latest",
 		"jasmine-core": "~2.99.1",
 		"jasmine-spec-reporter": "~4.2.1",
+		"jquery": "latest",
 		"karma": "~4.0.1",
 		"karma-chrome-launcher": "^2.2.0",
 		"karma-cli": "~1.0.1",
 		"karma-coverage-istanbul-reporter": "^2.0.5",
 		"karma-jasmine": "~1.1.2",
 		"karma-jasmine-html-reporter": "^0.2.2",
+		"karma-typescript": "^4.1.1",
+		"signalr": "latest",
 		"tslint": "~5.11.0",
 		"typescript": "~3.1.1"
 	}
