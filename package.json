@@ -1,6 +1,6 @@
 {
 	"name": "@nibo-ai/signalr-event-emitter",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"author": "NudgeIT",
 	"license": "MIT",
 	"description": "Implementation of SignalR as EventEmitter",
