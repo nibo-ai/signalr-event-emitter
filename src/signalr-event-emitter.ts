@@ -14,12 +14,12 @@ export interface SignalrEventEmitterSettings extends SignalR.Hub.Options, Signal
 	hubName: string;
 
 	/** Query parameters to be passed to SignalR */
-	queryParams: string | Object;
+	queryParams?: string | Object;
 
 	/** Client protocol version. */
-	clientProtocol: string;
+	clientProtocol?: string;
 
-	reconnectWindow: number;
+	reconnectWindow?: number;
 
 	/** Transport connection timeout in milliseconds. */
 	transportConnectTimeout: number;
