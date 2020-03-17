@@ -1,6 +1,6 @@
 {
 	"name": "@nibo-ai/signalr-event-emitter",
-	"version": "0.0.5",
+	"version": "0.1.0",
 	"author": "NudgeIT",
 	"license": "MIT",
 	"description": "Implementation of SignalR as EventEmitter",
@@ -38,23 +38,23 @@
 	},
 	"devDependencies": {
 		"@aspnet/signalr": "latest",
-		"@types/jasmine": "^2.8.8",
-		"@types/jasminewd2": "~2.0.3",
+		"@types/jasmine": "^2.8.16",
+		"@types/jasminewd2": "^2.0.8",
 		"@types/jquery": "latest",
-		"@types/node": "^8.9.4",
-		"@types/signalr": "latest",
+		"@types/node": "^12.11.1",
+		"@types/signalr": "^2.2.36",
 		"jasmine-core": "~2.99.1",
 		"jasmine-spec-reporter": "~4.2.1",
 		"jquery": "latest",
 		"karma": "~4.0.1",
 		"karma-chrome-launcher": "^2.2.0",
 		"karma-cli": "~1.0.1",
-		"karma-coverage-istanbul-reporter": "^2.0.5",
+		"karma-coverage-istanbul-reporter": "^2.1.1",
 		"karma-jasmine": "~1.1.2",
 		"karma-jasmine-html-reporter": "^0.2.2",
 		"karma-typescript": "^4.1.1",
 		"signalr": "latest",
-		"tslint": "~5.11.0",
-		"typescript": "~3.1.1"
+		"tslint": "latest",
+		"typescript": "~3.7.5"
 	}
 }

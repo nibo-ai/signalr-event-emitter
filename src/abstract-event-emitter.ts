@@ -59,6 +59,10 @@ export abstract class AbstractEventEmitter implements EventEmitter {
 		return this.off(event);
 	}
 
+	rawListeners(event: EventType): Listener[] {
+		return this.getListeners(event);
+	}
+
 	private getListeners(event: EventType, doNotCreate?: boolean): Listener[] {
 		let l = this.allListeners[event.toString()];
 		if (!l) {
